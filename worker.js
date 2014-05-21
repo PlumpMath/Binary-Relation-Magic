@@ -1,5 +1,7 @@
 /*Analyzes the input*/
 function analyze() {
+    nodes = [];
+
     parse();
     
     var newHTML = print(nodes);
@@ -273,7 +275,6 @@ function save () {
     $("#relations").children("button").prop("disabled",false);
     var name = $("#save").children("input[type=\"text\"]").val();
     saved[name] = deepCopy(nodes);
-    nodes = [];
 
     $("#relations").html(function (index, oldHTML) {return oldHTML + "<input type=\"radio\" name=\"rels\"val=\""+name+"\">"+name+"</input><br />"});
 }
