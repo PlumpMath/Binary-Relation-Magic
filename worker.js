@@ -10,10 +10,8 @@ function analyze() {
     var props = getProperties(nodes);
     
     for(var i in props) {
-	newHTML += "It's "+props[i]+"<br>";
+	newHTML += "<br>It's "+props[i];
     }
-
-    newHTML = newHTML.substring(0,newHTML.length-4);
 
     $("#results").html(newHTML);
 }
