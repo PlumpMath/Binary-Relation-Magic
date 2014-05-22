@@ -1,3 +1,4 @@
+/*Constructor for a Node object*/
 function Node(value) {
     this.val = value;
     this.edges = [];
@@ -7,7 +8,6 @@ function Node(value) {
 	    return;
 	} else {
 	    this.edges.push(newEdge);
-//	    this.edges.sort(function (a,b){return a.val > b.val;});
 	}
     };
     this.addEnd = function (newEnd) {
@@ -15,11 +15,11 @@ function Node(value) {
 	    return;
 	} else {
 	    this.ends.push(newEnd);
-//	    this.ends.sort(function (a,b){return a.val > b.val;});
 	}
     };
 }
 
+/*Constructor for an Edge object*/
 function Edge(startNode, endNode) {
     this.start = startNode;
     this.end = endNode;
@@ -27,6 +27,7 @@ function Edge(startNode, endNode) {
     this.multiplicity = 1;
 }
 
+/*Checks if an element is contained in the given list*/
 function contains (list, element) { 
     if(!list) {
 	console.log("List is undefined");
@@ -38,30 +39,27 @@ function contains (list, element) {
     return false;
 }
 
+/*Returns a string representation of nodeList, in the same format as it would be input in*/
 function print (nodeList) {
     var result = "";
     for(var i in nodeList) {
-	result += nodeList[i].val + ": [";
+	result += nodeList[i].val + ": ";
 	for(var j in nodeList[i].edges) {
 		result += nodeList[i].edges[j].endNode.val + ",";
 	}
-	result += "] [";
-	
-	for(var k in nodeList[i].ends) {
-		result += nodeList[i].ends[k].startNode.val + ",";
-	}
-	result += "]<br>";
+	result += "<br>";
     }
+    result = result.substring(0,result.length-4);
     return result;
 }
 
+/*Parses an input string into a nodeList and edgeList*/
 function parse (input) {
     var nodeList = [];
     var edgeList = [];
 
     var lines = input.split("\n");
     
-//    for(var i = 0; i < lines.length; i++) {
     for(var i in lines) {
 	var array = lines[i].split(":");
 	var startPt = array[0].trim();
@@ -78,7 +76,6 @@ function parse (input) {
 	    nodeList[startPt] = startNode;
 	}
 
-//	for(var j = 0; j < array2.length; j++) {
 	for(var j in array2) {
 	    var endPt = array2[j].trim();
 	    var endNode = nodeList[endPt];
@@ -105,6 +102,7 @@ function parse (input) {
     return result;
 }
 
+/*Consistently names edges based on starting and ending nodes*/
 function nameEdge(startNode, endNode) {
     return "("+startNode.val+","+endNode.val+")";
 }

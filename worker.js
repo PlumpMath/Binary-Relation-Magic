@@ -10,46 +10,28 @@ function analyze() {
     var props = getProperties(nodes);
     
     for(var i in props) {
-	newHTML += "<br>It's "+props[i];
+	newHTML += "It's "+props[i]+"<br>";
     }
+
+    newHTML = newHTML.substring(0,newHTML.length-4);
 
     $("#results").html(newHTML);
 }
 
+/*Called on load, sets up the global namespace correctly*/
 function setup () {
     nodes = [];
     edges = [];
     saved = [];
 
-    if(typeof(String.prototype.trim) === "undefined")
-    {
-	String.prototype.trim = function() 
-	{
-            return String(this).replace(/^\s+|\s+$/g, '');
-	};
+    if(typeof(String.prototype.trim) === "undefined") {
+	String.prototype.trim = function() { return String(this).replace(/^\s+|\s+$/g, ''); };
     }
 
-
-    for(var i = 1; i <= 5; i++) {
-	var string = "";
-	for(var j = 1; j <= i; j++) {
-	    string += j+":";
-	    for(var k = 1; k <= i; k++) {
-		string += k+",";
-	    }
-	    string = string.substring(0, string.length-1)+"\n";
-	}
-	string = string.substring(0,string.length-1);
-
-	var graph = parse(string);
-	saveHelp("K"+i, graph["nodes"], graph["edges"]);
-
-    }
-
-    $("#relations").children("button").prop("disabled",false);
-
+    addCompleteGraphs();
 }
 
+/*Loads the selected saved list into the current list, overwritng any existing data*/
 function load () {
     var buttons = $("input[type=radio]");
     for (var i = 0; buttons[i]; i++) {
@@ -61,6 +43,7 @@ function load () {
     loadHelp(string);
 }
 
+/*Same function as above, but takes name as a parameter so it can be used programatically*/
 function loadHelp (name) {
     if(saved[name]) { nodes = saved[name]["nodes"]; edges = saved[name]["edges"]; }
 
@@ -76,12 +59,14 @@ function loadHelp (name) {
     $("#input").val(inText);
 }
 
+/*Saves the current data into the load list*/
 function save () {
     $("#relations").children("button").prop("disabled",false);
     var name = $("#save").children("input[type=\"text\"]").val();
     saveHelp(name, nodes, edges);
 }
 
+/*Saves the data passed in into the nodes list*/
 function saveHelp (listName, nodeList, edgeList) {
     saved[listName] =[];
     saved[listName]["nodes"] = deepCopy(nodeList);
@@ -90,6 +75,7 @@ function saveHelp (listName, nodeList, edgeList) {
     $("#relations").html(function (index, oldHTML) {return oldHTML + "<input type=\"radio\" name=\"rels\"val=\""+listName+"\">"+listName+"</input><br />"});
 }
 
+/*Resets the current list, and the text onscreen*/
 function reset() {
     nodes = [];
     edges = [];
@@ -97,6 +83,7 @@ function reset() {
     $("#input").val("1: 1");
 }
 
+/*Determines which properties the list has*/
 function getProperties(list) {
     var properties = ["reflexive", "symmetric","antisymmetric","transitive","a one-to-one function", "a function"];
     
@@ -159,11 +146,32 @@ function getProperties(list) {
     return properties;
 }
 
-
+/*Creates a functionally different copy of the array (all elements are still references)*/
 function deepCopy(array) {
     var result = [];
     for(var i in array) {
 	result[i] = array[i];
     }
     return result;
+}
+
+/*Creates the complete graphs from K1 to K5 and adds them to the load list*/
+function addCompleteGraphs() {
+    for(var i = 1; i <= 5; i++) {
+	var string = "";
+	for(var j = 1; j <= i; j++) {
+	    string += j+":";
+	    for(var k = 1; k <= i; k++) {
+		string += k+",";
+	    }
+	    string = string.substring(0, string.length-1)+"\n";
+	}
+	string = string.substring(0,string.length-1);
+
+	var graph = parse(string);
+	saveHelp("K"+i, graph["nodes"], graph["edges"]);
+
+    }
+
+    $("#relations").children("button").prop("disabled",false);
 }
