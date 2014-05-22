@@ -8,23 +8,23 @@ function draw () {
 
 /*Determines what edges need to be drawn and calls the appropriate helper methods*/
 function drawEdges (ctx) {
-    for(var i in nodes) {
-	var myNode = nodes[i];
-	for(var j in myNode.edges) {
-	    var otherNode = myNode.edges[j].end;
-	    
-	    var myVal = myNode.index;
-	    var otherVal = otherNode.index;
-
-	    if(myVal === otherVal) {
-		drawSelfLoop(ctx, myVal);		
-	    } else if((myVal - otherVal) % 2 == 0) {
-		drawCurvedEdge(ctx, myNode, otherNode);
-	    } else {
-		drawCrossEdge(ctx, myNode, otherNode);
-	    }
-	}
-    }
+	for(var i in nodes) {
+		var myNode = nodes[i];
+		for(var j in myNode.edges) {
+			var otherNode = myNode.edges[j].end;
+			
+	    	var myVal = myNode.index;
+	    	var otherVal = otherNode.index;
+	    	
+		    if(myVal === otherVal) {
+				drawSelfLoop(ctx, myVal);		
+	    	} else if((myVal - otherVal) % 2 == 0) {
+				drawCurvedEdge(ctx, myNode, otherNode);
+			} else {
+				drawCrossEdge(ctx, myNode, otherNode);
+	   		}
+		}
+  	}
 }
 
 /*Draws edges that go from the top row to the bottom row, or visa versa*/
@@ -49,32 +49,33 @@ function drawCrossEdge(ctx, myNode, otherNode) {
     ctx.lineTo(xEnd, -yEnd);
     ctx.stroke();
 
+	var otherEdge = edges[nameEdge(otherNode, myNode)];
 
-    if(!contains(otherNode.edges, myNode)) {
-	var big = myVal > otherVal;
+    if(!contains(otherNode.edges, otherEdge)) {
+		var big = myVal > otherVal;
 	
-	var xContact = (xs[myVal] + xs[otherVal] + xs[otherVal]) / 3;
-	var yContact = ys[myVal] + slope * (xContact - xs[myVal]);
+		var xContact = (xs[myVal] + xs[otherVal] + xs[otherVal]) / 3;
+		var yContact = ys[myVal] + slope * (xContact - xs[myVal]);
 	
-	var thetaA = Math.atan(slope);
-	if(!big) { thetaA -= 2 * Math.PI / 3; }
-	var thetaB = (thetaA - Math.PI/ 6);
+		var thetaA = Math.atan(slope);
+		if(!big) { thetaA -= 2 * Math.PI / 3; }
+		var thetaB = (thetaA - Math.PI/ 6);
 
-	var xEnd1 = xContact + 15 * Math.cos(thetaB);
-	var yEnd1 = yContact + 15 * Math.sin(thetaB);
+		var xEnd1 = xContact + 15 * Math.cos(thetaB);
+		var yEnd1 = yContact + 15 * Math.sin(thetaB);
 
-	if(!big) { var thetaC = thetaB - Math.PI / 3; }
-	else { var thetaC = thetaB + Math.PI / 3; }
+		if(!big) { var thetaC = thetaB - Math.PI / 3; }
+		else { var thetaC = thetaB + Math.PI / 3; }
 
-	var xEnd2 = xContact + 15 * Math.cos(thetaC);
-	var yEnd2 = yContact + 15 * Math.sin(thetaC);
+		var xEnd2 = xContact + 15 * Math.cos(thetaC);
+		var yEnd2 = yContact + 15 * Math.sin(thetaC);
 
-	ctx.beginPath();
-	ctx.moveTo(xContact, -yContact);
-	ctx.lineTo(xEnd1, -yEnd1);
-	ctx.moveTo(xContact, -yContact);
-	ctx.lineTo(xEnd2, -yEnd2);
-	ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(xContact, -yContact);
+		ctx.lineTo(xEnd1, -yEnd1);
+		ctx.moveTo(xContact, -yContact);
+		ctx.lineTo(xEnd2, -yEnd2);
+		ctx.stroke();
     }
 }
 
