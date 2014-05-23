@@ -45,8 +45,9 @@ function print (nodeList) {
     for(var i in nodeList) {
 	result += nodeList[i].val + ": ";
 	for(var j in nodeList[i].edges) {
-		result += nodeList[i].edges[j].endNode.val + ",";
+	    result += nodeList[i].edges[j].end.val + ",";
 	}
+	result = result.substring(0,result.length-1);
 	result += "<br>";
     }
     result = result.substring(0,result.length-4);
@@ -54,11 +55,11 @@ function print (nodeList) {
 }
 
 /*Parses an input string into a nodeList and edgeList*/
-function parse (input) {
+function parse (input, delim) {
     var nodeList = [];
     var edgeList = [];
 
-    var lines = input.split("\n");
+    var lines = input.split(delim);
     
     for(var i in lines) {
 	var array = lines[i].split(":");

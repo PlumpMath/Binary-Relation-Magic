@@ -1,14 +1,14 @@
 /*Analyzes the input*/
 function analyze() {
-    var res = parse($("#input").val());
+    var res = parse($("#input").val(), "\n");
 
     nodes = res["nodes"];
     edges = res["edges"];
     
-    var newHTML = "";// print(nodes);
+    var newHTML = "";
 
     var props = getProperties(nodes);
-    
+
     for(var i in props) {
 	newHTML += "<br>It's "+props[i];
     }
@@ -18,13 +18,18 @@ function analyze() {
 
 /*Called on load, sets up the global namespace correctly*/
 function setup () {
-    nodes = [];
-    edges = [];
+    var res = parse($("#input").val(), "\n");
+
+    nodes = res["nodes"];
+    edges = res["edges"];
     saved = [];
+
 
     if(typeof(String.prototype.trim) === "undefined") {
 	String.prototype.trim = function() { return String(this).replace(/^\s+|\s+$/g, ''); };
     }
+
+    loadSaved();
 
     addCompleteGraphs();
 }
@@ -62,13 +67,27 @@ function save () {
     $("#relations").children("button").prop("disabled",false);
     var name = $("#save").children("input[type=\"text\"]").val();
     saveHelp(name, nodes, edges);
+    $("#save").children("input[type=\"text\"]").val("");
 }
 
 /*Saves the data passed in into the nodes list*/
 function saveHelp (listName, nodeList, edgeList) {
-    saved[listName] =[];
+    if(saved[listName]) { return; }
+    
+    saved[listName] = [];
     saved[listName]["nodes"] = deepCopy(nodeList);
     saved[listName]["edges"] = deepCopy(edgeList);
+
+    if(sessionStorage.savedListNames) {
+	var savedListNames = JSON.parse(sessionStorage.savedListNames);
+    } else {
+	var savedListNames = [];
+    }
+
+    savedListNames.push(listName);
+    savedListNames = savedListNames.filter(onlyUnique);
+    sessionStorage.savedListNames = JSON.stringify(savedListNames);
+    sessionStorage.setItem(listName, print(saved[listName]["nodes"]));
 
     $("#relations").html(function (index, oldHTML) {return oldHTML + "<input type=\"radio\" name=\"rels\"val=\""+listName+"\">"+listName+"</input><br />"});
 }
@@ -89,7 +108,7 @@ function getProperties(list) {
 	var myNode = list[i];
 
 	/*Reflexive check*/
-	if(!contains(myNode.edges, myNode)) {
+	if(!contains(myNode.edges, edges[nameEdge(myNode, myNode)])) {
 	    var refInd = properties.indexOf("reflexive");
 	    if(refInd > -1) { properties.splice(refInd,1); }
 	}
@@ -98,22 +117,22 @@ function getProperties(list) {
 	    var otherNode = myNode.edges[j].end;
 
 	    /*Symmetric check*/
-	    if(!contains(otherNode.edges, myNode)) {
+	    if(!contains(otherNode.edges, edges[nameEdge(otherNode, myNode)])) {
 		var symInd = properties.indexOf("symmetric");
 		if(symInd > -1) { properties.splice(symInd,1); }
 	    }
 	    
 	    /*Antisymmetric check*/
-	    if(otherNode != myNode && contains(myNode.ends, otherNode)) {
+	    if(otherNode != myNode && contains(otherNode.edges, edges[nameEdge(otherNode, myNode)])) {
 		var antiInd = properties.indexOf("antisymmetric");
 		if(antiInd > -1) { properties.splice(antiInd,1); }
 	    }
 
 	    for(var k in otherNode.edges) {
-		var thirdNode = otherNode.edges[k];
+		var thirdNode = otherNode.edges[k].end;
 		
 		/*Transitive check*/
-		if(!contains(myNode.edges, thirdNode)) {
+		if(!contains(myNode.edges, edges[nameEdge(myNode, thirdNode)])) {
 		    var tranInd = properties.indexOf("transitive");
 		    if(tranInd > -1) { properties.splice(tranInd,1); }
 		}
@@ -166,10 +185,30 @@ function addCompleteGraphs() {
 	}
 	string = string.substring(0,string.length-1);
 
-	var graph = parse(string);
+	var graph = parse(string, "\n");
 	saveHelp("K"+i, graph["nodes"], graph["edges"]);
 
     }
 
     $("#relations").children("button").prop("disabled",false);
+}
+
+function loadSaved () {
+    if(!sessionStorage.savedListNames) {
+	return;
+    }
+    
+    var savedListNames = JSON.parse(sessionStorage.savedListNames);
+
+    for(var i in savedListNames) {
+	var item = sessionStorage.getItem(savedListNames[i]);
+	if(item) {
+	    var res = parse(item, "<br>");
+	    saveHelp(savedListNames[i], res["nodes"], res["edges"]);
+	}
+    }
+}
+
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
 }
