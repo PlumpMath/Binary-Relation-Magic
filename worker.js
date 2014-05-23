@@ -94,10 +94,16 @@ function saveHelp (listName, nodeList, edgeList) {
 
 /*Resets the current list, and the text onscreen*/
 function reset() {
-    nodes = [];
-    edges = [];
+    if(saved["K1"]) {
+	loadHelp("K1");
+	$("#input").val("1: 1");
+    } else {
+	nodes = [];
+	edges = [];
+	$("#input").val("");
+    }
+    
     $("#results").html("...");
-    $("#input").val("1: 1");
 }
 
 /*Determines which properties the list has*/
