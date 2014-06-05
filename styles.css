@@ -1,0 +1,69 @@
+html {
+    background: #BCF289;
+}
+#container {
+}
+h1 {
+    font: 900 3em Georgia, "Times New Roman", serif;
+    margin: 30px 30px;
+    text-align: center;
+    color: #FFF;
+    text-shadow: -2px 0 #000, 0 2px #000, 2px 0 #000, 0 -2px #000;
+}
+textarea {
+    margin: 10px;
+    background: #F2C9FF;
+}
+button {
+    background: #B2E0FF;
+    padding: 2px 5px;
+    border: outset 4px #66C2FF;
+}
+button:active {
+    border: inset 4px #FC0;
+}
+button:disabled {
+    border: outset 4px #9AF8FF;
+    background: #C2F0FF;
+}
+#buttons {
+    margin: 20px;
+    width: 340px;
+}
+.paragraph {
+    margin: 20px;
+    background: #FFFFB8;
+    border: double 3px #FFDB4D;
+    padding: 5px;
+}
+input[type="radio"] {
+    font-family: Arial, Sans-serif;
+}
+footer {
+    clear: both;
+    background: #090;
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+    position: fixed;
+    padding: 5px 0;
+    bottom: 0px;
+    width: 100%;
+    opacity: 0.72;
+}
+footer p {
+    color: #004C1A;
+}
+#cop {
+    float: right;
+    margin-right: 25%;
+}
+#menu {
+    margin: 20px 50px -10px 50px;
+}
+#menu a {
+    padding: 5px;
+}
+#selectedMenu {
+    background: white;
+}

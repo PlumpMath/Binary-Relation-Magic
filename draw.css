@@ -1,0 +1,9 @@
+#relations {
+    margin-left: 20px;
+}
+#relations * {
+    display: inline;
+}
+#relations button {
+    margin-bottom: 5px;
+}
