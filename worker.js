@@ -10,86 +10,27 @@ function analyze() {
     var props = getProperties(nodes);
 
     for(var i in props) {
-	newHTML += "<br>It's "+props[i];
+	newHTML += "It's "+props[i]+"<br>";
     }
+    newHTML = newHTML.substring(0, newHTML.length-4);
 
     $("#results").html(newHTML);
 }
 
-/*Called on load, sets up the global namespace correctly*/
-function setup () {
-    var res = parse($("#input").val(), "\n");
-
-    nodes = res["nodes"];
-    edges = res["edges"];
-    saved = [];
-
-
-    if(typeof(String.prototype.trim) === "undefined") {
-	String.prototype.trim = function() { return String(this).replace(/^\s+|\s+$/g, ''); };
+function makeSidebar() {
+    var div = $("#relations");
+    var maxWidth = 210;
+    for(var name in saved) {
+	var wid = div.children("span#"+spaceless(name)+"Span").width();
+	maxWidth = findMax(maxWidth, wid);
     }
-
-    loadSaved();
-
-    addCompleteGraphs();
-}
-
-/*Loads the selected saved list into the current list, overwritng any existing data*/
-function load () {
-    var buttons = $("input[type=radio]");
-    for (var i = 0; buttons[i]; i++) {
-	if(buttons[i].checked) { 
-	    var string = buttons[i].outerHTML.substring(37, buttons[i].outerHTML.length-2);
-	}
-    }
-
-    loadHelp(string);
-}
-
-/*Same function as above, but takes name as a parameter so it can be used programatically*/
-function loadHelp (name) {
-    if(saved[name]) { nodes = saved[name]["nodes"]; edges = saved[name]["edges"]; }
-
-    var inText = "";
-    for(var i in nodes) {
-	inText += nodes[i].val + ": "
-	for(var j in nodes[i].edges) {
-		inText += nodes[i].edges[j].end.val + ", "; 
-	}
-	inText = inText.substring(0, inText.length-2)+"\n";
-    }
-    inText = inText.substring(0, inText.length-1);
-    $("#input").val(inText);
-}
-
-/*Saves the current data into the load list*/
-function save () {
-    $("#relations").children("button").prop("disabled",false);
-    var name = $("#save").children("input[type=\"text\"]").val();
-    saveHelp(name, nodes, edges);
-    $("#save").children("input[type=\"text\"]").val("");
-}
-
-/*Saves the data passed in into the nodes list*/
-function saveHelp (listName, nodeList, edgeList) {
-    if(saved[listName]) { return; }
     
-    saved[listName] = [];
-    saved[listName]["nodes"] = deepCopy(nodeList);
-    saved[listName]["edges"] = deepCopy(edgeList);
+    div.css("width", maxWidth+"px");
+    div.css("float", "left");
+}
 
-    if(sessionStorage.savedListNames) {
-	var savedListNames = JSON.parse(sessionStorage.savedListNames);
-    } else {
-	var savedListNames = [];
-    }
-
-    savedListNames.push(listName);
-    savedListNames = savedListNames.filter(onlyUnique);
-    sessionStorage.savedListNames = JSON.stringify(savedListNames);
-    sessionStorage.setItem(listName, print(saved[listName]["nodes"]));
-
-    $("#relations").html(function (index, oldHTML) {return oldHTML + "<input type=\"radio\" name=\"rels\"val=\""+listName+"\">"+listName+"</input><br />"});
+function findMax(val1, val2) {
+    return val1 > val2 ? val1 : val2;
 }
 
 /*Resets the current list, and the text onscreen*/
@@ -192,29 +133,35 @@ function addCompleteGraphs() {
 	string = string.substring(0,string.length-1);
 
 	var graph = parse(string, "\n");
-	saveHelp("K"+i, graph["nodes"], graph["edges"]);
+	saveHelp("K"+i, graph["nodes"], graph["edges"], true);
 
     }
-
-    $("#relations").children("button").prop("disabled",false);
 }
 
 function loadSaved () {
-    if(!sessionStorage.savedListNames) {
-	return;
+    if(!localStorage.savedListNames) {
+	return false;
     }
     
-    var savedListNames = JSON.parse(sessionStorage.savedListNames);
+    var savedListNames = JSON.parse(localStorage.savedListNames);
 
+    var result = false;
     for(var i in savedListNames) {
-	var item = sessionStorage.getItem(savedListNames[i]);
+	result = true;
+	var item = localStorage.getItem(savedListNames[i]);
 	if(item) {
 	    var res = parse(item, "<br>");
-	    saveHelp(savedListNames[i], res["nodes"], res["edges"]);
+	    saveHelp(savedListNames[i], res["nodes"], res["edges"], false);
 	}
     }
+    return result;
 }
 
 function onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;
+}
+
+function spaceless(string) {
+    string = string.replace(/ /g, '_');
+    return string;
 }

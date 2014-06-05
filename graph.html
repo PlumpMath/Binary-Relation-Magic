@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Binary Relations Graph</title>
+    <script  src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="graph.js"></script>
+    <script src="worker.js"></script>
+    <script src="io.js"></script>
+    <script src="draw.js"></script>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="draw.css" />
+  </head>
+  <body onload="drawPageSetup();">
+    <div id="menu">
+      <a href="index.html" title="Edit the Binary Relations">Edit</a>
+      <a id="selectedMenu" href="graph.html" title="Visualize the Binary Relations">View</a>
+    </div>
+    <div id="container">
+      <h1>Binary Relation Magic</h1>
+      <div id="relations">
+	<div id="relButtons">
+	  <button onclick="load();draw();">Draw</button>
+	</div>
+	<br>
+      </div>
+      <canvas id="canvas" width="800" height="300"></canvas>
+    </div> 
+    <footer>
+      <p id="cop">(c) April 2014 </p>
+      <p id="foot">created by zach helfinstein </p>
+    </footer>
+  </body>
+</html>
