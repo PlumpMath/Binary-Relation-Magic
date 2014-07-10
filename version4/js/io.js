@@ -41,6 +41,17 @@ function drawPageSetup () {
     resizeCanvas();
 }
 
+function aboutPageSetup () {
+    sizeMenu();
+    var width = 650;
+    if($(window).width < 700) {
+	width = $(window).width - 50;
+    }
+
+    $("#aboutText").css("width", width+"px");
+    center($("#aboutText"));
+}
+
 /*Styles the page dynamically*/
 function style() {
     center($("#input"));
