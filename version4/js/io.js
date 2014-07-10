@@ -204,7 +204,9 @@ function resizeCanvas () {
 }
 
 function sizeMenu () {
-   var width = 2*$("a").outerWidth(true) + $("#selectedMenu").outerWidth(true);
+   var width = $("a").outerWidth(true) 
+	     + $("a + a").outerWidth(true)
+	     + $("#selectedMenu").outerWidth(true);
    $("#menu").css("width", (width+20)+"px");
    center($("#menu"));
 }
