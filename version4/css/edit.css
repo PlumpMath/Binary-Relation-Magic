@@ -1,0 +1,18 @@
+#input {
+    resize: vertical;
+}
+#relations {
+    margin: 20px 10px 40px 10px;
+}
+#relations #relButtons {
+    padding: 20px 10px;
+    float: left;
+    height: 10em;
+}
+#relButtons button {
+    margin: 10px;
+    display: block;
+}
+#results {
+    width: 350px;
+}
