@@ -1,5 +1,5 @@
 /*Called on load, sets up the global namespace correctly*/
-function setup () {
+function editPageSetup () {
     var res = parse($("#input").val(), "\n");
 
     nodes = res["nodes"];
@@ -7,11 +7,13 @@ function setup () {
     saved = [];
 
     if(typeof(String.prototype.trim) === "undefined") {
-	String.prototype.trim = function() { return String(this).replace(/^\s+|\s+$/g, ''); };
+	    String.prototype.trim = function() {
+            return String(this).replace(/^\s+|\s+$/g, ''); 
+        };
     }
 
     if(!loadSaved()) {
-	addCompleteGraphs();
+	   addCompleteGraphs();
     }
     $("#relButtons").children("button").prop("disabled",false);
     style();
@@ -45,10 +47,8 @@ function style() {
     center($("#relations"));
     center($("#buttons"));
 
-    var width = $("#selectedMenu").outerWidth(true) + $("#selectedMenu + a").outerWidth(true);
-    $("#menu").css("width", (width+20)+"px");    
+    sizeMenu();
 
-    center($("#menu"));
     if($(window).width() < 500) {
 	$("#results").width($(window).width());
     }

@@ -33,7 +33,7 @@ function contains (list, element) {
 	console.log("List is undefined");
     }
     for(var i = 0; i < list.length;i++) {
-	if(list[i]===element)
+	if(list[i] === element)
 	    return true;
     } 
     return false;
