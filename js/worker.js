@@ -17,18 +17,6 @@ function analyze() {
     $("#results").html(newHTML);
 }
 
-function makeSidebar() {
-    var div = $("#relations");
-    var maxWidth = 210;
-    for(var name in saved) {
-	var wid = div.children("span#"+spaceless(name)+"Span").width();
-	maxWidth = findMax(maxWidth, wid);
-    }
-    
-    div.css("width", maxWidth+"px");
-    div.css("float", "left");
-}
-
 function findMax(val1, val2) {
     return val1 > val2 ? val1 : val2;
 }
@@ -121,7 +109,7 @@ function deepCopy(array) {
 
 /*Creates the complete graphs from K1 to K5 and adds them to the load list*/
 function addCompleteGraphs() {
-    for(var i = 1; i <= 5; i++) {
+    for(var i = 1; i <= 10; i++) {
 	var string = "";
 	for(var j = 1; j <= i; j++) {
 	    string += j+":";
