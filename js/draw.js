@@ -150,20 +150,23 @@ function drawSelfLoop(ctx, myNode) {
 
 /*Draws the nodes*/
 function drawNodes (ctx) {
+    var width = $("#canvas").prop("width");
+    var maxNodes = Math.floor((width-20)/100);
+
     var leng = nodes.length;
-    if(leng > 5) {
-	leng = 5;
+    if(leng > maxNodes) {
+	leng = maxNodes;
     } 
 
     var index = 1;
     for(var i in nodes) {
-	if(index > 5) {
+	if(index > maxNodes) {
 	    break;
 	} 
 
-	nodes[i].xCoord = 100*(index)+50*(index-1);
+	nodes[i].xCoord = 100*(index-1)+25;
 	/*Coordinates are calculated in standard cartesian plane (quadrant 4) and then the y-values are inverted just before drawing*/
-	nodes[i].yCoord = index % 2 == 1 ? -100 : -200; 
+	nodes[i].yCoord = index % 2 == 1 ? -150 : -250; 
 
 	nodes[i].index = index;
 

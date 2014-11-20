@@ -1,21 +1,22 @@
 /*Called on load, sets up the global namespace correctly*/
-function setup () {
+function editPageSetup () {
     var res = parse($("#input").val(), "\n");
-    style();
 
     nodes = res["nodes"];
     edges = res["edges"];
     saved = [];
 
-
     if(typeof(String.prototype.trim) === "undefined") {
-	String.prototype.trim = function() { return String(this).replace(/^\s+|\s+$/g, ''); };
+	    String.prototype.trim = function() {
+            return String(this).replace(/^\s+|\s+$/g, ''); 
+        };
     }
 
     if(!loadSaved()) {
-	addCompleteGraphs();
+	   addCompleteGraphs();
     }
     $("#relButtons").children("button").prop("disabled",false);
+    style();
 }
 
 
@@ -33,8 +34,22 @@ function drawPageSetup () {
 	alert("You have not added any graphs.");
 	window.location = "index.html";
     }
-    //center($("#canvas"));
-    makeSidebar();
+    sizeMenu();
+    var div = $("#relations");
+    div.css("width", (maxWidth(div, 56))+"px");
+    div.css("float", "left");
+    resizeCanvas();
+}
+
+function aboutPageSetup () {
+    sizeMenu();
+    var width = 650;
+    if($(window).width < 700) {
+	width = $(window).width - 50;
+    }
+
+    $("#aboutText").css("width", width+"px");
+    center($("#aboutText"));
 }
 
 /*Styles the page dynamically*/
@@ -42,6 +57,9 @@ function style() {
     center($("#input"));
     center($("#relations"));
     center($("#buttons"));
+
+    sizeMenu();
+
     if($(window).width() < 500) {
 	$("#results").width($(window).width());
     }
@@ -87,7 +105,8 @@ $("#relations").html( function (index, oldHTML) {
     var end = index + 17 + 2 * name.length;
     return oldHTML.substring(0, start) + oldHTML.substring(end+1, oldHTML.length);
 });
-    
+
+    resizeRelations();
 }
 
 /*Loads the selected saved list into the current list, overwritng any existing data*/
@@ -155,5 +174,58 @@ function saveHelp (listName, nodeList, edgeList, addToSaveList) {
     }
 
     $("#relations").html(function (index, oldHTML) {return oldHTML + "<span id=\""+spaceless(listName)+"Span\"><input type=\"radio\" name=\"rels\"val=\""+listName+"\">"+listName+"</input></span><br>"});
+
+    resizeRelations();
 }
 
+function maxWidth(div, init) {
+    var maxWid = init;
+    for(var name in saved) {
+	var child = div.children("span#"+spaceless(name)+"Span");
+	if(child) {
+	    var wid = child.width();
+	    maxWid = findMax(maxWid, wid);
+	}
+    }
+    return maxWid;
+}
+
+function totalHeight() {
+    var div = $("#relations");
+    var height = 0;
+    for(var name in saved) {
+	var child = div.children("span#"+spaceless(name)+"Span");
+	if(child) {
+	    height += child.height();
+	}
+    }
+    return height;
+}
+
+function resizeCanvas () {
+    var canvas = $("#canvas");
+    var sideWidth = $("#relations").outerWidth(true);
+    var width = $(document).width() - sideWidth - 20;
+    canvas.prop("width", width);
+
+    var topHeight = $("h1").outerHeight(true) + $("#menu").height() + $("footer").height() + 20;
+    var height = $(document).height() - topHeight;
+    canvas.prop("height", height);
+    canvas.css("margin", 0);
+}
+
+function sizeMenu () {
+   var width = $("a").outerWidth(true) 
+	     + $("a + a").outerWidth(true)
+	     + $("#selectedMenu").outerWidth(true);
+   $("#menu").css("width", (width+20)+"px");
+   center($("#menu"));
+}
+
+function resizeRelations () {
+    var width = maxWidth($("#relations"),0) + $("#relButtons").width()+20;
+    $("#relations").css("width", width+"px");
+
+    var height = totalHeight();
+    $("#relButtons").css("height",height+"px");
+}
