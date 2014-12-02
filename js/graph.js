@@ -21,8 +21,8 @@ function Node(value) {
 
 /*Constructor for an Edge object*/
 function Edge(startNode, endNode) {
-    this.start = startNode;
-    this.end = endNode;
+    this.source = startNode;//this.start = startNode;
+    this.target = endNode;//this.end = endNode;
     this.directed = true;
     this.multiplicity = 1;
 }
