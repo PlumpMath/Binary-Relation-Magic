@@ -127,19 +127,22 @@ function addCompleteGraphs() {
 }
 
 function loadSaved () {
+    //If there is no list of saved items, return false.
     if(!localStorage.savedListNames) {
 	return false;
     }
     
+    //Get the list of names
     var savedListNames = JSON.parse(localStorage.savedListNames);
 
+    //Makes sure the list is non-empty before returning true.
     var result = false;
     for(var i in savedListNames) {
 	result = true;
-	var item = localStorage.getItem(savedListNames[i]);
-	if(item) {
-	    var res = parse(item, "<br>");
-	    saveHelp(savedListNames[i], res["nodes"], res["edges"], false);
+	var graphText = localStorage.getItem(savedListNames[i]);
+	if(graphText) {
+	    var graph = parse(graphText, "<br>");
+	    saveHelp(savedListNames[i], graph["nodes"], graph["edges"], false);
 	}
     }
     return result;

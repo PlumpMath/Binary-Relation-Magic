@@ -1,20 +1,22 @@
 /*Constructor for a Node object*/
-function Node(value) {
-    this.val = value;
-    this.edges = [];
-    this.ends = [];
+function Node(_name) {
+    this.name = _name;
+    this.edges = []; //Outbound edges
+    this.ends = []; //Inbound edges
     this.addEdge = function (newEdge) {
 	if(contains(this.edges, newEdge)) {
-	    return;
+	    return false;
 	} else {
 	    this.edges.push(newEdge);
+	    return true;
 	}
     };
     this.addEnd = function (newEnd) {
 	if(contains(this.ends, newEnd)) {
-	    return;
+	    return false;
 	} else {
 	    this.ends.push(newEnd);
+	    return true;
 	}
     };
 }
@@ -32,7 +34,7 @@ function contains (list, element) {
     if(!list) {
 	console.log("List is undefined");
     }
-    for(var i = 0; i < list.length;i++) {
+    for(var i = 0; i < list.length;++i) {
 	if(list[i] === element)
 	    return true;
     } 
@@ -43,9 +45,9 @@ function contains (list, element) {
 function print (nodeList) {
     var result = "";
     for(var i in nodeList) {
-	result += nodeList[i].val + ": ";
+	result += nodeList[i].name + ": ";
 	for(var j in nodeList[i].edges) {
-	    result += nodeList[i].edges[j].end.val + ",";
+	    result += nodeList[i].edges[j].end.name + ",";
 	}
 	result = result.substring(0,result.length-1);
 	result += "<br>";
@@ -55,16 +57,19 @@ function print (nodeList) {
 }
 
 /*Parses an input string into a nodeList and edgeList*/
-function parse (input, delim) {
+function parse (inputText, delimiter) {
     var nodeList = [];
     var edgeList = [];
 
-    var lines = input.split(delim);
+    var lines = inputText.split(delimiter);
     
+    //For each separate sentence of the input, parse it into the nodes and edges declared
     for(var i in lines) {
+	//The source node will always be before a colon, and the destination(s) will be after
 	var array = lines[i].split(":");
 	var startPt = array[0].trim();
 	if(array[1]) {
+	    //Destination nodes are comma-separated
 	    var array2 = array[1].split(",");
 	    for(var z in array2) { array2[z] = array2[z].trim(); }
 	} else {
@@ -72,25 +77,30 @@ function parse (input, delim) {
 	}
 
 	var startNode = nodeList[startPt];
+	//If our source node does not yet exist, initialize it
 	if(!startNode) {
 	    startNode = new Node(startPt);
 	    nodeList[startPt] = startNode;
 	}
 
+	//For each destination node, add an edge and update source.edges and destination.ends
 	for(var j in array2) {
 	    var endPt = array2[j].trim();
 	    var endNode = nodeList[endPt];
+	    //If our destination node doesn't exist, then initialize it
 	    if(!endNode) {
 		endNode = new Node(endPt);
 		nodeList[endPt] = endNode;
 	    }
 
+	    //Make the edge
 	    var edgeName = nameEdge(startNode, endNode);
 	    var edge = edgeList[edgeName];
 	    if(!edge) {
 		edge = new Edge(startNode, endNode);
 		edgeList[edgeName] = edge;
 	    } else {
+	    //If it already exists, increase the multiplicity.
 		edge.multiplicity++;
 	    }
 	    startNode.addEdge(edge);
@@ -105,5 +115,5 @@ function parse (input, delim) {
 
 /*Consistently names edges based on starting and ending nodes*/
 function nameEdge(startNode, endNode) {
-    return "("+startNode.val+","+endNode.val+")";
+    return "("+startNode.name+","+endNode.name+")";
 }

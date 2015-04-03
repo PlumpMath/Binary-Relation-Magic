@@ -1,22 +1,27 @@
 /*Called on load, sets up the global namespace correctly*/
 function editPageSetup () {
-    var res = parse($("#input").val(), "\n");
+	
+	//Load the default graph
+	var inputText = $("#input").val();	
+    	var graph = parse(inputText, "\n");
 
-    nodes = res["nodes"];
-    edges = res["edges"];
-    saved = [];
+    	nodes = graph["nodes"];
+    	edges = graph["edges"];
+    	saved = [];
 
-    if(typeof(String.prototype.trim) === "undefined") {
-	    String.prototype.trim = function() {
-            return String(this).replace(/^\s+|\s+$/g, ''); 
-        };
-    }
+    	if(typeof(String.prototype.trim) === "undefined") {
+	    	String.prototype.trim = function() {
+            		return String(this).replace(/^\s+|\s+$/g, ''); 
+        	};
+    	}
 
-    if(!loadSaved()) {
-	   addCompleteGraphs();
-    }
-    $("#relButtons").children("button").prop("disabled",false);
-    style();
+	//Load saved graphs or default saved graphs
+    	if(!loadSaved()) {
+		addCompleteGraphs();
+	}
+	//Greys out buttons until they will function properly 
+   	$("#relButtons").children("button").prop("disabled",false);
+    	style();
 }
 
 
@@ -24,10 +29,10 @@ function drawPageSetup () {
     saved = [];
     loadSaved();
     var isInit = false;
-    for(var res in saved) {
+    for(var graph in saved) {
 	isInit = true;
-	nodes = saved[res]["nodes"];
-	edges = saved[res]["edges"];
+	nodes = saved[graph]["nodes"];
+	edges = saved[graph]["edges"];
 	break;
     }
     if(!isInit) {
@@ -111,7 +116,7 @@ $("#relations").html( function (index, oldHTML) {
 
 /*Loads the selected saved list into the current list, overwritng any existing data*/
 function load () {
-    var buttons = $("#relations span input[type=radio]");
+	var buttons = $("#relations span input[type=radio]");
     for (var i = 0; buttons[i]; i++) {
 	if(buttons[i].checked) { 
 	    var string = buttons[i].outerHTML.substring(37, buttons[i].outerHTML.length-2);
@@ -123,18 +128,24 @@ function load () {
 
 /*Same purpose as above, but takes name as a parameter so it can be used programatically*/
 function loadHelp (name) {
-    if(saved[name]) { nodes = saved[name]["nodes"]; edges = saved[name]["edges"]; }
-
-    var inText = "";
-    for(var i in nodes) {
-	inText += nodes[i].val + ": "
-	for(var j in nodes[i].edges) {
-		inText += nodes[i].edges[j].end.val + ", "; 
+	if(saved[name]) { 
+		nodes = saved[name]["nodes"]; 
+		edges = saved[name]["edges"]; 
+	} else {
+		alert("Error loading graph. Please try again. [Error code 00001]");
 	}
-	inText = inText.substring(0, inText.length-2)+"\n";
-    }
-    inText = inText.substring(0, inText.length-1);
-    $("#input").val(inText);
+
+    	var inText = "";
+    	for(var i in nodes) {
+		inText += nodes[i].val + ": "
+		for(var j in nodes[i].edges) {
+			inText += nodes[i].edges[j].target.name + ", "; 
+		
+		}
+		inText = inText.substring(0, inText.length-2)+"\n";
+    	}
+    	inText = inText.substring(0, inText.length-1);
+    	$("#input").val(inText);
 }
 
 
