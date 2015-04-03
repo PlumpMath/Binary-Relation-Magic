@@ -38,7 +38,7 @@ function drawPageSetup () {
     var div = $("#relations");
     div.css("width", (maxWidth(div, 56))+"px");
     div.css("float", "left");
-    resizeCanvas();
+    resizeSVG();
 }
 
 function aboutPageSetup () {
@@ -202,16 +202,16 @@ function totalHeight() {
     return height;
 }
 
-function resizeCanvas () {
-    var canvas = $("#canvas");
+function resizeSVG () {
+    var svg = $("#mySVG > svg");
     var sideWidth = $("#relations").outerWidth(true);
     var width = $(document).width() - sideWidth - 20;
-    canvas.prop("width", width);
+    svg.prop("width", width);
 
     var topHeight = $("h1").outerHeight(true) + $("#menu").height() + $("footer").height() + 20;
     var height = $(document).height() - topHeight;
-    canvas.prop("height", height);
-    canvas.css("margin", 0);
+    svg.prop("height", height);
+    svg.css("margin", 0);
 }
 
 function sizeMenu () {
