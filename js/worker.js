@@ -2,12 +2,12 @@
 function analyze() {
     var res = parse($("#input").val(), "\n");
 
-    nodes = res["nodes"];
-    edges = res["edges"];
+    currentNodes = res["nodes"];
+    currentEdges = res["edges"];
     
     var newHTML = "";
 
-    var props = getProperties(nodes);
+    var props = getProperties(currentNodes);
 
     for(var i in props) {
 	newHTML += "It's "+props[i]+"<br>";
@@ -27,8 +27,8 @@ function reset() {
 	loadHelp("K1");
 	$("#input").val("1: 1");
     } else {
-	nodes = [];
-	edges = [];
+	currentNodes = [];
+	currentEdges = [];
 	$("#input").val("");
     }
     
@@ -43,7 +43,7 @@ function getProperties(list) {
 	var myNode = list[i];
 
 	/*Reflexive check*/
-	if(!contains(myNode.edges, edges[nameEdge(myNode, myNode)])) {
+	if(!contains(myNode.edges, currentEdges[nameEdge(myNode, myNode)])) {
 	    var refInd = properties.indexOf("reflexive");
 	    if(refInd > -1) { properties.splice(refInd,1); }
 	}
@@ -52,13 +52,13 @@ function getProperties(list) {
 	    var otherNode = myNode.edges[j].end;
 
 	    /*Symmetric check*/
-	    if(!contains(otherNode.edges, edges[nameEdge(otherNode, myNode)])) {
+	    if(!contains(otherNode.edges, currentEdges[nameEdge(otherNode, myNode)])) {
 		var symInd = properties.indexOf("symmetric");
 		if(symInd > -1) { properties.splice(symInd,1); }
 	    }
 	    
 	    /*Antisymmetric check*/
-	    if(otherNode != myNode && contains(otherNode.edges, edges[nameEdge(otherNode, myNode)])) {
+	    if(otherNode != myNode && contains(otherNode.edges, currentEdges[nameEdge(otherNode, myNode)])) {
 		var antiInd = properties.indexOf("antisymmetric");
 		if(antiInd > -1) { properties.splice(antiInd,1); }
 	    }
@@ -67,7 +67,7 @@ function getProperties(list) {
 		var thirdNode = otherNode.edges[k].end;
 		
 		/*Transitive check*/
-		if(!contains(myNode.edges, edges[nameEdge(myNode, thirdNode)])) {
+		if(!contains(myNode.edges, currentEdges[nameEdge(myNode, thirdNode)])) {
 		    var tranInd = properties.indexOf("transitive");
 		    if(tranInd > -1) { properties.splice(tranInd,1); }
 		}
@@ -109,20 +109,23 @@ function deepCopy(array) {
 
 /*Creates the complete graphs from K1 to K5 and adds them to the load list*/
 function addCompleteGraphs() {
+    alert("adding complete graphs");
     for(var i = 1; i <= 10; i++) {
-	var string = "";
+	var graph = {nodes:[], edges:[]};
 	for(var j = 1; j <= i; j++) {
-	    string += j+":";
-	    for(var k = 1; k <= i; k++) {
-		string += k+",";
-	    }
-	    string = string.substring(0, string.length-1)+"\n";
+		graph["nodes"][j] = new Node(j);
 	}
-	string = string.substring(0,string.length-1);
+	for(var j = 1; j <= i; j++) {
+		for(var k = 1; k <= i; k++) {
+			var edge = new Edge(graph["nodes"][j], 
+		 		 	    graph["nodes"][k]);
+			graph["edges"].push(edge);
+			graph["nodes"][j].addEdge(edge);
+			graph["nodes"][k].addEnd(edge);
+		}
+	}
 
-	var graph = parse(string, "\n");
 	saveHelp("K"+i, graph["nodes"], graph["edges"], true);
-
     }
 }
 

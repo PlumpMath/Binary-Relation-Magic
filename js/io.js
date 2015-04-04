@@ -5,8 +5,8 @@ function editPageSetup () {
 	var inputText = $("#input").val();	
     	var graph = parse(inputText, "\n");
 
-    	nodes = graph["nodes"];
-    	edges = graph["edges"];
+    	currentNodes = graph["nodes"];
+    	currentEdges = graph["edges"];
     	saved = [];
 
     	if(typeof(String.prototype.trim) === "undefined") {
@@ -18,6 +18,8 @@ function editPageSetup () {
 	//Load saved graphs or default saved graphs
     	if(!loadSaved()) {
 		addCompleteGraphs();
+	} else {
+		alert("loadSaved worked");	
 	}
 	//Greys out buttons until they will function properly 
    	$("#relButtons").children("button").prop("disabled",false);
@@ -31,8 +33,8 @@ function drawPageSetup () {
     var isInit = false;
     for(var graph in saved) {
 	isInit = true;
-	nodes = saved[graph]["nodes"];
-	edges = saved[graph]["edges"];
+	currentNodes = saved[graph]["nodes"];
+	currentEdges = saved[graph]["edges"];
 	break;
     }
     if(!isInit) {
@@ -105,7 +107,7 @@ function deleteHelp (name) {
     }
 
 $("#relations").html( function (index, oldHTML) {
-    var index = oldHTML.indexOf("val=\""+name+"\"");
+    var index = oldHTML.indexOf('val="'+name+'"');
     var start = index - 48 - name.length;
     var end = index + 17 + 2 * name.length;
     return oldHTML.substring(0, start) + oldHTML.substring(end+1, oldHTML.length);
@@ -129,17 +131,17 @@ function load () {
 /*Same purpose as above, but takes name as a parameter so it can be used programatically*/
 function loadHelp (name) {
 	if(saved[name]) { 
-		nodes = saved[name]["nodes"]; 
-		edges = saved[name]["edges"]; 
+		currentNodes = saved[name]["nodes"]; 
+		currentEdges = saved[name]["edges"]; 
 	} else {
-		alert("Error loading graph. Please try again. [Error code 00001]");
+		alert('Error: no graph found with the name "'+name+'". Please try again. [Error code 00001]');
 	}
 
     	var inText = "";
-    	for(var i in nodes) {
-		inText += nodes[i].val + ": "
-		for(var j in nodes[i].edges) {
-			inText += nodes[i].edges[j].target.name + ", "; 
+    	for(var i in currentNodes) {
+		inText += currentNodes[i].name + ": "
+		for(var j in currentNodes[i].edges) {
+			inText += currentNodes[i].edges[j].target.name + ", "; 
 		
 		}
 		inText = inText.substring(0, inText.length-2)+"\n";
@@ -159,7 +161,7 @@ function save () {
     } else if(saved[name]) {
 	alert("That name is already taken. Please choose a new one.");
     } else {
-	saveHelp(name, nodes, edges, true);
+	saveHelp(name, currentNodes, currentEdges, true);
     }
     $("#save").children("input[type=\"text\"]").val("");
 }
@@ -184,7 +186,7 @@ function saveHelp (listName, nodeList, edgeList, addToSaveList) {
 	localStorage.setItem(listName, print(saved[listName]["nodes"]));
     }
 
-    $("#relations").html(function (index, oldHTML) {return oldHTML + "<span id=\""+spaceless(listName)+"Span\"><input type=\"radio\" name=\"rels\"val=\""+listName+"\">"+listName+"</input></span><br>"});
+    $("#relations").html(function (index, oldHTML) {return oldHTML + '<span id="'+spaceless(listName)+'Span"><input type="radio" name="rels"val="'+listName+'">'+listName+"</input></span><br>"});
 
     resizeRelations();
 }

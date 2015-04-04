@@ -47,7 +47,7 @@ function print (nodeList) {
     for(var i in nodeList) {
 	result += nodeList[i].name + ": ";
 	for(var j in nodeList[i].edges) {
-	    result += nodeList[i].edges[j].end.name + ",";
+	    result += nodeList[i].edges[j].target.name + ",";
 	}
 	result = result.substring(0,result.length-1);
 	result += "<br>";
