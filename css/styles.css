@@ -12,7 +12,11 @@ h1 {
 }
 textarea {
     margin: 10px;
-    background: #b8ff70;
+    background: #b8ff90;
+}
+input[type=text] {
+    background: #d8ffb0;
+    border-color: #619b61;
 }
 button {
     background: #A2F0D8;
@@ -65,5 +69,6 @@ footer p {
     padding: 5px;
 }
 #selectedMenu {
-    background: white;
+    background: #92d8ff;
+    border: 2px solid #417b41;
 }
