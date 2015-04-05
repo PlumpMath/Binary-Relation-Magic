@@ -1,5 +1,5 @@
 html {
-    background: #BCF289;
+    background: #6DcD6D;
 }
 #container {
 }
@@ -12,15 +12,15 @@ h1 {
 }
 textarea {
     margin: 10px;
-    background: #F2C9FF;
+    background: #b8ff70;
 }
 button {
-    background: #B2E0FF;
+    background: #A2F0D8;
     padding: 2px 5px;
-    border: outset 4px #66C2FF;
+    border: outset 4px #56D2CF;
 }
 button:active {
-    border: inset 4px #FC0;
+    border: inset 4px #66C2FF;
 }
 button:disabled {
     border: outset 4px #9AF8FF;
@@ -32,8 +32,8 @@ button:disabled {
 }
 .paragraph {
     margin: 20px;
-    background: #FFFFB8;
-    border: double 3px #FFDB4D;
+    background: #a1dfa1;
+    border: double 3px #417b41;
     padding: 5px;
 }
 input[type="radio"] {

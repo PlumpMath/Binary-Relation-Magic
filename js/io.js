@@ -18,8 +18,6 @@ function editPageSetup () {
 	//Load saved graphs or default saved graphs
     	if(!loadSaved()) {
 		addCompleteGraphs();
-	} else {
-		alert("loadSaved worked");	
 	}
 	//Greys out buttons until they will function properly 
    	$("#relButtons").children("button").prop("disabled",false);

@@ -49,7 +49,7 @@ function getProperties(list) {
 	}
 
 	for(var j in myNode.edges) {
-	    var otherNode = myNode.edges[j].end;
+	    var otherNode = myNode.edges[j].target;
 
 	    /*Symmetric check*/
 	    if(!contains(otherNode.edges, currentEdges[nameEdge(otherNode, myNode)])) {
@@ -64,7 +64,7 @@ function getProperties(list) {
 	    }
 
 	    for(var k in otherNode.edges) {
-		var thirdNode = otherNode.edges[k].end;
+		var thirdNode = otherNode.edges[k].target;
 		
 		/*Transitive check*/
 		if(!contains(myNode.edges, currentEdges[nameEdge(myNode, thirdNode)])) {
