@@ -26,24 +26,63 @@ function editPageSetup () {
 
 
 function drawPageSetup () {
-    saved = [];
-    loadSaved();
-    var isInit = false;
-    for(var graph in saved) {
-	isInit = true;
-	currentNodes = saved[graph]["nodes"];
-	currentEdges = saved[graph]["edges"];
-	break;
-    }
-    if(!isInit) {
-	alert("You have not added any graphs.");
-	window.location = "index.html";
-    }
-    sizeMenu();
-    var div = $("#relations");
-    div.css("width", (maxWidth(div, 56))+"px");
-    div.css("float", "left");
-    resizeSVG();
+    	saved = [];
+    	loadSaved();
+    	var isInit = false;
+    	for(var graph in saved) {
+		isInit = true;
+		currentNodes = saved[graph]["nodes"];
+		currentEdges = saved[graph]["edges"];
+		break;
+    	}
+    	if(!isInit) {
+		alert("You have not added any graphs.");
+		window.location = "index.html";
+    	}
+    	sizeMenu();
+    	var div = $("#relations");
+    	div.css("width", (maxWidth(div, 56))+"px");
+    	div.css("float", "left");
+    	var dim = getSVGdimensions();
+    	drawPageSVG = d3.select("#mySVG")
+			.append("svg")
+			.attr("width", dim.width)
+			.attr("height", dim.height);
+
+	//This code creates svg defs representing arrowheads for the edges. It has been borrowed from an example featured on d3js.org, which can be found at http://bl.ocks.org/rkirsling/5001347 - I did not write this code and I have not edited this code, beyond changing the name of the svg.
+	drawPageSVG.append('svg:defs').append('svg:marker')
+    				      	.attr('id', 'end-arrow')
+    				      	.attr('viewBox', '0 -5 10 10')
+    				      	.attr('refX', 6)
+    				      	.attr('markerWidth', 3)
+    				      	.attr('markerHeight', 3)
+    				      	.attr('orient', 'auto')
+  				      .append('svg:path')
+    				      	.attr('d', 'M0,-5L10,0L0,5')
+    				      	.attr('fill', '#000');
+
+	drawPageSVG.append('svg:defs').append('svg:marker')
+    				      	.attr('id', 'start-arrow')
+				      	.attr('viewBox', '0 -5 10 10')
+				      	.attr('refX', 4)
+				      	.attr('markerWidth', 3)
+				    	.attr('markerHeight', 3)
+				    	.attr('orient', 'auto')
+				      .append('svg:path')
+				    	.attr('d', 'M10,-5L0,0L10,5')
+    					.attr('fill', '#000');
+	//End of borrowed code
+
+	d3ForceReference = d3.layout.force()
+				 .nodes(currentNodes)
+				 .links(currentEdges)
+				 .linkDistance(150)
+				 .charge(-500)
+				 .on("tick", graphTickFunction)
+				 .size(dim);
+
+	d3EdgeSelection = drawPageSVG.append("svg:g").selectAll("path");
+	d3NodeSelection = drawPageSVG.append("svg:g").selectAll("g");
 }
 
 function aboutPageSetup () {
@@ -213,16 +252,14 @@ function totalHeight() {
     return height;
 }
 
-function resizeSVG () {
-    var svg = $("#mySVG > svg");
-    var sideWidth = $("#relations").outerWidth(true);
-    var width = $(document).width() - sideWidth - 20;
-    svg.prop("width", width);
+function getSVGdimensions () {
+    	var result = {width:0, height:0};
+	var sideWidth = $("#relations").outerWidth(true);
+    	result.width = $(document).width() - sideWidth - 20;
 
-    var topHeight = $("h1").outerHeight(true) + $("#menu").height() + $("footer").height() + 20;
-    var height = $(document).height() - topHeight;
-    svg.prop("height", height);
-    svg.css("margin", 0);
+    	var topHeight = $("h1").outerHeight(true) + $("#menu").height() + $("footer").height() + 20;
+    	result.height = $(document).height() - topHeight;
+	return result;
 }
 
 function sizeMenu () {
@@ -239,4 +276,48 @@ function resizeRelations () {
 
     var height = totalHeight();
     $("#relButtons").css("height",height+"px");
+}
+
+function graphTickFunction () {
+	//Calculate positions of edges and nodes based on data
+	d3EdgeSelection.attr("d", function(d) {
+		var xLength = d.target.x - d.source.x;
+		var yLength = d.target.y - d.source.y;
+		var distance = Math.sqrt(xLength * xLength + yLength * yLength);
+		var srcX = d.source.x + xLength / distance * 12; //HARDCODED VALUE
+		var srcY = d.source.y + yLength / distance * 12; //HARDCODED VALUE
+		var tarX = d.target.x - xLength / distance * 17; //HARDCODED VALUE
+		var tarY = d.target.y - yLength / distance * 17; //HARDCODED VALUE
+		return "M"+srcX+","+srcY+"L"+tarX+","+tarY;
+	});
+	d3NodeSelection.attr("transform", function(d) {
+		return "translate ("+d.x+", "+d.y+")";
+	});
+}
+
+function draw () {
+	//use d3.enter() to initialize the things
+	
+	//HOTFIX: FIND ACTUAL ISSUE WHEN TIME
+	currentNodes = currentNodes.filter(function(d) {return d!= undefined;});
+
+	d3NodeSelection = d3NodeSelection.data(currentNodes, function(d) {return d.name;});
+	d3EdgeSelection = d3EdgeSelection.data(currentEdges);
+
+	d3EdgeSelection.enter().append("svg:path")
+			       .attr("class", "edge")
+	 		       .style("marker-end", "url(#end-arrow)");
+
+	
+	var g = d3NodeSelection.enter().append("svg:g");
+	g.append("svg:circle")
+	  .attr("class", "node")
+	  .attr("r", 12); //HARD-CODED VALUE
+	g.append("svg:text")
+	  .attr("x", 0)
+	  .attr("y", 4)
+	  .attr("class", "name")
+	  .text(function(d) {return d.name;});
+
+	d3ForceReference.start();
 }

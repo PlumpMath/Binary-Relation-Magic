@@ -109,7 +109,6 @@ function deepCopy(array) {
 
 /*Creates the complete graphs from K1 to K5 and adds them to the load list*/
 function addCompleteGraphs() {
-    alert("adding complete graphs");
     for(var i = 1; i <= 10; i++) {
 	var graph = {nodes:[], edges:[]};
 	for(var j = 1; j <= i; j++) {
